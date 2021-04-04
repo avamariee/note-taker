@@ -1,2 +1,1 @@
-# note-taker
-Challenge 11 Repository
+# Note Taker Starter Code
