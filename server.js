@@ -26,6 +26,19 @@ function createNewNote(body, notesArray) {
     return note;
 }
 
+// function to validate the data of the notes
+
+function validateNote(note){
+    if (!note.title || typeof note.title !== 'string'){
+        return false;
+    }
+    if (!note.text || typeof note.text !== 'string'){
+        return false;
+    }
+    return true;
+}
+
+// GET ROUTES >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // get path to notes.html after clicking "get started" button on index.html
 app.get('/notes', (req, res) => {
@@ -44,15 +57,13 @@ app.get('/db/db', (req, res) => {
     console.log(req.query)
     res.json(results);
 });
-
-
-
 // get path to index.html, needs to be after all the GET routes or it will override everything else.
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
+// POST ROUTES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. 
 // You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
@@ -62,14 +73,19 @@ app.post('/api/notes', (req, res) => {
     // set id based on what the next index of the array will be
     req.body.id = notes.length.toString();
 
+    // if data in the req.body is incorrect, send 400 error back to user
+
+    if (!validateNote(req.body)){
+        res.status(400).send('Your note is not properly formatted.');
+    } else {
     const newNote = createNewNote(req.body, notes);
 
-    // console.log(newNote);
-
-    // notes.push(newNote);
-
     res.json(notes);
+    }
 })
+
+
+
 
 
 
