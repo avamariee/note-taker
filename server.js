@@ -14,18 +14,16 @@ app.use(express.static('public'));
 
 let notes = require('./db/db.json')
 
-
 // function to create new note data
 
 function createNewNote(body, notesArray) {
     const note = body;
     notesArray.push(note);
-    // add the data to the db.json file
+    // add the data to the notesArray, which is the db.json file.
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
         JSON.stringify(notesArray, null, 2)
     )
-
     return note;
 }
 
@@ -49,7 +47,6 @@ app.get('/notes', (req, res) => {
 })
 
 // GET /api/notes should read the db.json file and return all saved notes as JSON.
-
 app.get('/api/notes', (req, res) => {
     return res.json(notes);
 })
@@ -62,54 +59,43 @@ app.get('/db/db', (req, res) => {
 });
 
 // get path to index.html, needs to be after all the GET routes or it will override everything else.
-
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
-// POST ROUTES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// POST ROUTES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. 
 
 app.post('/api/notes', (req, res) => {
-
     // set id based on what the next index of the array will be
     req.body.id = notes.length.toString();
-
     // if data in the req.body is incorrect, send 400 error back to user
-
     if (!validateNote(req.body)) {
         res.status(400).send('Your note is not properly formatted.');
     } else {
-
         const newNote = createNewNote(req.body, notes);
-
         res.json(notes);
     }
 })
 
+// DELETE the note when the button is clicked
 app.delete('/api/notes/:id', (req, res) => {
-    console.log('Hello World.', req.params.id);
-
+    // filter through the array and see if the note id matches the id of the note clicked for deletion.
     notes = notes.filter((note) => {
-
-        console.log('Note', note.id);
         if (note.id !== req.params.id) {
-
+            // if the note does not equal the id of the note clicked on, return it as true and continue to display on the web page.
             return true;
-
         }
-
+        // if the note equals the id of the note clicked on, return it as false, removing it from the array.
         return false;
-
     })
 
-    
+    // update the db.json file to reflect that the note has been deleted.
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
         JSON.stringify(notes, null, 2)
     )
-
     res.json(notes);
 })
 
