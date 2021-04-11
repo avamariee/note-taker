@@ -9,6 +9,9 @@ app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
 
+// make the server uses our html css and js files in the public folder
+app.use(express.static('public'));
+
 const notes = require('./db/db.json')
 
 
@@ -83,11 +86,6 @@ app.post('/api/notes', (req, res) => {
     res.json(notes);
     }
 })
-
-
-
-
-
 
 // app listener >>>>>>>>>>>>>>>>>
 
