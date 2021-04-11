@@ -12,7 +12,7 @@ app.use(express.json());
 // make the server uses our html css and js files in the public folder
 app.use(express.static('public'));
 
-const notes = require('./db/db.json')
+let notes = require('./db/db.json')
 
 
 // function to create new note data
@@ -31,11 +31,11 @@ function createNewNote(body, notesArray) {
 
 // function to validate the data of the notes
 
-function validateNote(note){
-    if (!note.title || typeof note.title !== 'string'){
+function validateNote(note) {
+    if (!note.title || typeof note.title !== 'string') {
         return false;
     }
-    if (!note.text || typeof note.text !== 'string'){
+    if (!note.text || typeof note.text !== 'string') {
         return false;
     }
     return true;
@@ -74,18 +74,43 @@ app.get('*', (req, res) => {
 app.post('/api/notes', (req, res) => {
 
     // set id based on what the next index of the array will be
-    req.body.id = notes.length;
-    
+    req.body.id = notes.length.toString();
+
     // if data in the req.body is incorrect, send 400 error back to user
 
-    if (!validateNote(req.body)){
+    if (!validateNote(req.body)) {
         res.status(400).send('Your note is not properly formatted.');
     } else {
 
-    const newNote = createNewNote(req.body, notes);
+        const newNote = createNewNote(req.body, notes);
+
+        res.json(notes);
+    }
+})
+
+app.delete('/api/notes/:id', (req, res) => {
+    console.log('Hello World.', req.params.id);
+
+    notes = notes.filter((note) => {
+
+        console.log('Note', note.id);
+        if (note.id !== req.params.id) {
+
+            return true;
+
+        }
+
+        return false;
+
+    })
+
+    
+    fs.writeFileSync(
+        path.join(__dirname, './db/db.json'),
+        JSON.stringify(notes, null, 2)
+    )
 
     res.json(notes);
-    }
 })
 
 // app listener >>>>>>>>>>>>>>>>>

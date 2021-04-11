@@ -1,22 +1,7 @@
 [
   {
-    "title": "Sleepy",
-    "text": "Tired",
-    "id": "1"
-  },
-  {
     "title": "Quesadilla",
     "text": "Cheese, Chicken, and Tortilla.",
     "id": "2"
-  },
-  {
-    "title": "Testtt",
-    "text": "Yes!",
-    "id": 3
-  },
-  {
-    "title": "Test",
-    "text": "Test",
-    "id": 3
   }
 ]
